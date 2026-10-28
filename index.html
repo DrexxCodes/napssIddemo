@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Digital ID</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+          colors: {
+            ink: '#14161a',
+            muted: '#6b7280',
+            line: '#e6e8ec',
+            accent: '#3b4cca'
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* Tab indicator and panel transitions */
+    .tab-btn { position: relative; transition: color .2s ease; }
+    .tab-btn::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+      background: #14161a; transform: scaleX(0); transform-origin: left;
+      transition: transform .25s ease;
+    }
+    .tab-btn[aria-selected="true"] { color: #14161a; }
+    .tab-btn[aria-selected="true"]::after { transform: scaleX(1); }
+    .tab-btn[aria-selected="false"] { color: #6b7280; }
+    .tab-btn[aria-selected="false"]:hover { color: #14161a; }
+
+    .panel { animation: fadeIn .3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    /* dope ass progress ring: pathLength=100 makes the dash values equal the percentage */
+    .ring-progress { transition: stroke-dasharray .9s cubic-bezier(.22,.61,.36,1); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .ring-progress, .tab-btn, .tab-btn::after { animation: none; transition: none; }
+    }
+  </style>
+</head>
+
+<body class="bg-white text-ink min-h-screen">
+  <main class="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 sm:py-12 lg:px-12 lg:py-16 2xl:max-w-7xl">
+
+    <!-- Profile header -->
+     <!-- Dicebear cos why not -->
+    <header class="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
+      <img
+        id="avatar"
+        src="https://api.dicebear.com/9.x/notionists/svg?seed=2024134106&backgroundColor=f3f4f6"
+        alt="Avatar of Drexx Tech"
+        width="112" height="112"
+        class="h-24 w-24 shrink-0 rounded-full border border-line bg-gray-100 sm:h-28 sm:w-28"
+      />
+
+      <div class="min-w-0 flex-1">
+        <p class="text-xs font-medium uppercase tracking-[0.18em] text-muted">Student Digital ID</p>
+        <h1 class="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Drexx Tech</h1>
+
+        <dl class="mt-4 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-2">
+          <div>
+            <dt class="text-xs text-muted">Registration number</dt>
+            <dd class="text-sm font-medium tabular-nums">2024134106</dd>
+          </div>
+          <div class="min-w-0">
+            <dt class="text-xs text-muted">School email</dt>
+            <dd class="truncate text-sm font-medium">drexxtech@stu.unizik.edu.ng</dd>
+          </div>
+        </dl>
+
+        <p class="mt-4 text-sm text-muted">
+          Political Sciences
+          <span class="mx-2 text-line" aria-hidden="true">|</span>
+          Faculty of Social Sciences
+          <span class="mx-2 text-line" aria-hidden="true">|</span>
+          Year 3
+        </p>
+      </div>
+    </header>
+
+    <!-- Academic session row -->
+    <section aria-label="Current academic session" class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2 border-y border-line py-4 text-sm">
+      <div class="flex items-baseline gap-2">
+        <span class="text-muted">Session</span>
+        <span class="font-semibold tabular-nums">2026/2027</span>
+      </div>
+      <span class="hidden h-4 w-px bg-line sm:block" aria-hidden="true"></span>
+      <div class="flex items-baseline gap-2">
+        <span class="text-muted">Semester</span>
+        <span class="font-semibold">1st</span>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <div class="mt-10">
+      <div role="tablist" aria-label="Student records" class="flex w-full gap-8 border-b border-line">
+        <button role="tab" id="tab-attendance" aria-controls="panel-attendance" aria-selected="true" tabindex="0"
+          class="tab-btn min-h-[44px] py-3 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">
+          Attendance
+        </button>
+        <button role="tab" id="tab-fees" aria-controls="panel-fees" aria-selected="false" tabindex="-1"
+          class="tab-btn min-h-[44px] py-3 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">
+          School Fees
+        </button>
+      </div>
+
+      <!-- Attendance panel -->
+      <section id="panel-attendance" role="tabpanel" aria-labelledby="tab-attendance" tabindex="0" class="panel pt-10 focus:outline-none">
+        <div class="grid grid-cols-1 gap-10 md:grid-cols-[auto_1fr] md:items-center md:gap-16 lg:gap-24">
+
+          <!-- Ring -->
+          <div class="flex flex-col items-center gap-3 md:items-start">
+            <div class="relative h-40 w-40 sm:h-44 sm:w-44">
+              <svg viewBox="0 0 120 120" class="h-full w-full -rotate-90" role="img" aria-label="Attendance rate 88 percent">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#eceef2" stroke-width="8" />
+                <circle id="ring" class="ring-progress" cx="60" cy="60" r="52" fill="none"
+                  stroke="#3b4cca" stroke-width="8" stroke-linecap="round"
+                  pathLength="100" stroke-dasharray="0 100" data-value="88" />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-3xl font-semibold tabular-nums tracking-tight">88%</span>
+              </div>
+            </div>
+            <p class="text-sm text-muted">Attendance Rate</p>
+          </div>
+
+          <!-- Course details -->
+          <div class="min-w-0 md:border-l md:border-line md:pl-16 lg:pl-24">
+            <p class="text-xs font-medium uppercase tracking-[0.18em] text-muted">Course</p>
+            <h2 class="mt-1 text-xl font-semibold tracking-tight sm:text-2xl">Political Miandering</h2>
+            <p class="mt-1 text-sm text-muted tabular-nums">PSC 111</p>
+
+            <dl class="mt-8 grid grid-cols-1 gap-y-5 sm:grid-cols-2 sm:gap-x-10">
+              <div class="border-t border-line pt-3">
+                <dt class="text-xs text-muted">Course Code</dt>
+                <dd class="mt-1 text-sm font-medium">PSC 111</dd>
+              </div>
+              <div class="border-t border-line pt-3">
+                <dt class="text-xs text-muted">Course Title</dt>
+                <dd class="mt-1 text-sm font-medium">Political Miandering</dd>
+              </div>
+              <div class="border-t border-line pt-3">
+                <dt class="text-xs text-muted">Course Registration Status</dt>
+                <dd class="mt-1 inline-flex items-center gap-2 text-sm font-medium text-green-700">
+                  <span class="h-1.5 w-1.5 rounded-full bg-green-600" aria-hidden="true"></span>
+                  Registered
+                </dd>
+              </div>
+              <div class="border-t border-line pt-3">
+                <dt class="text-xs text-muted">Carryover Status</dt>
+                <dd class="mt-1 inline-flex items-center gap-2 text-sm font-medium text-red-700">
+                  <span class="h-1.5 w-1.5 rounded-full bg-red-600" aria-hidden="true"></span>
+                  False
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <!-- School fees panel -->
+      <section id="panel-fees" role="tabpanel" aria-labelledby="tab-fees" tabindex="0" hidden class="panel pt-10 focus:outline-none">
+        <div class="flex items-baseline gap-3">
+          <h2 class="text-sm text-muted">School Fees</h2>
+          <p class="inline-flex items-center gap-2 text-xl font-semibold text-green-700">
+            <span class="h-2 w-2 rounded-full bg-green-600" aria-hidden="true"></span>
+            Paid
+          </p>
+        </div>
+
+        <h3 class="mt-10 text-xs font-medium uppercase tracking-[0.18em] text-muted">Payment history</h3>
+
+        <div class="mt-4 w-full overflow-x-auto" role="region" aria-label="Payment history table" tabindex="0">
+          <table class="w-full min-w-[34rem] border-collapse text-left text-sm">
+            <thead>
+              <tr class="border-b border-line text-xs uppercase tracking-wider text-muted">
+                <th scope="col" class="py-3 pr-6 font-medium">Academic Session</th>
+                <th scope="col" class="py-3 pr-6 font-medium">Date Paid</th>
+                <th scope="col" class="py-3 font-medium">Payment Reference</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-line">
+              <tr class="transition-colors hover:bg-gray-50">
+                <td class="py-4 pr-6 font-medium tabular-nums">2026/2027</td>
+                <td class="py-4 pr-6 tabular-nums text-ink">12 Oct 2026</td>
+                <td class="py-4 font-mono text-[13px] text-muted">UPAY-26-7K4D91XQ02</td>
+              </tr>
+              <tr class="transition-colors hover:bg-gray-50">
+                <td class="py-4 pr-6 font-medium tabular-nums">2025/2026</td>
+                <td class="py-4 pr-6 tabular-nums text-ink">09 Oct 2025</td>
+                <td class="py-4 font-mono text-[13px] text-muted">UPAY-25-3M8R55LC71</td>
+              </tr>
+              <tr class="transition-colors hover:bg-gray-50">
+                <td class="py-4 pr-6 font-medium tabular-nums">2024/2025</td>
+                <td class="py-4 pr-6 tabular-nums text-ink">18 Oct 2024</td>
+                <td class="py-4 font-mono text-[13px] text-muted">UPAY-24-9B2T60HE38</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-4 text-xs text-muted">Sample data for presentation purposes only.</p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+      const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
+
+      function activate(index, focus) {
+        tabs.forEach((tab, i) => {
+          const selected = i === index;
+          tab.setAttribute('aria-selected', String(selected));
+          tab.tabIndex = selected ? 0 : -1;
+          panels[i].hidden = !selected;
+        });
+        if (focus) tabs[index].focus();
+        if (index === 0) animateRing();
+      }
+
+      tabs.forEach((tab, i) => {
+        tab.addEventListener('click', () => activate(i, false));
+        tab.addEventListener('keydown', (e) => {
+          let next = null;
+          if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+          if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+          if (e.key === 'Home') next = 0;
+          if (e.key === 'End') next = tabs.length - 1;
+          if (next !== null) { e.preventDefault(); activate(next, true); }
+        });
+      });
+
+      // Progress ring: pathLength is 100, so dash length equals the percentage
+      const ring = document.getElementById('ring');
+      function animateRing() {
+        const value = Number(ring.dataset.value);
+        ring.setAttribute('stroke-dasharray', '0 100');
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          ring.setAttribute('stroke-dasharray', value + ' ' + (100 - value));
+        }));
+      }
+      animateRing();
+    })();
+  </script>
+</body>
+</html>
